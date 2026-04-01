@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  OliverThiele\OtRecordselector\:
+    resource: '../Classes/*'
+
+  OliverThiele\OtRecordselector\Controller\RecordSelectorController:
+    public: true

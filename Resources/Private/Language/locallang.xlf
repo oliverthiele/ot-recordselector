@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext"
+	      original="EXT:ot_recordselector/Resources/Private/Language/locallang.xlf"
+	      product-name="ot-recordselector">
+		<body>
+			<trans-unit id="element.placeholder" resname="element.placeholder">
+				<source>Search …</source>
+			</trans-unit>
+			<trans-unit id="chip.remove" resname="chip.remove">
+				<source>Remove</source>
+			</trans-unit>
+			<trans-unit id="badge.hidden" resname="badge.hidden">
+				<source>hidden</source>
+			</trans-unit>
+			<trans-unit id="error.unknown_table" resname="error.unknown_table">
+				<source>Unknown table</source>
+			</trans-unit>
+			<trans-unit id="error.access_denied" resname="error.access_denied">
+				<source>Access denied</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

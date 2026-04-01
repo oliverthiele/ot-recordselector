@@ -1,0 +1,39 @@
+# ============================================================
+# PHPStan configuration for ot-recordselector (TYPO3 Extension)
+# ============================================================
+
+includes:
+  # TYPO3-specific PHPStan rules
+  - ../../vendor/saschaegerer/phpstan-typo3/extension.neon
+
+parameters:
+  # ----------------------------------------------------------------
+  # General settings
+  # ----------------------------------------------------------------
+  level: 9
+  paths:
+    - Classes/
+  tmpDir: ../../var/cache/phpstan/ot-recordselector
+  reportUnmatchedIgnoredErrors: false
+  checkUninitializedProperties: true
+
+  # ----------------------------------------------------------------
+  # Treat missing classes or constants as non-fatal
+  # (useful when analysing in non-TYPO3 context, e.g. DDEV CLI)
+  # ----------------------------------------------------------------
+  ignoreErrors:
+    # TYPO3 globals (appear in middleware or CLI context)
+    - '#\$GLOBALS\[''TYPO3_REQUEST''\]#'
+    - '#Constant TYPO3_MODE not found#'
+
+    # TYPO3 utility stubs (if not autoloaded)
+    - '#Call to an undefined method TYPO3\\CMS\\Core\\Utility\\GeneralUtility::#'
+
+
+  # ----------------------------------------------------------------
+  # Expected extensions and autoload
+  # ----------------------------------------------------------------
+  scanDirectories:
+    - ../../vendor
+  scanFiles:
+    - ../../vendor/autoload.php
