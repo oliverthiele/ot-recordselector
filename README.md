@@ -46,7 +46,8 @@ OT Record Selector takes a different approach:
 - **Configurable search fields** — restrict AJAX search to specific indexed columns (`searchFields`); falls back to `ctrl.searchFields` from TCA, then to the label field
 - **Configurable info fields** — show any TCA fields as labeled metadata (`uid`, `pid`, or any column name)
 - **Result limit** — configurable per field (`maxResults`), hard cap at 200
-- **Permission-aware** — respects TYPO3 backend user `tables_select` permissions
+- **Permission-aware** — respects TYPO3 backend user `tables_select` and `tables_modify` permissions; the edit button is hidden when the editor cannot modify the table
+- **Inaccessible record protection** — cards for records on pages the editor cannot access display a `no access` badge; removing them requires confirmation via a TYPO3-native modal
 - **Hidden record indicator** — shows a `hidden` badge (yellow) when all checked versions are hidden, or a `partially hidden` badge (grey) when only one side is hidden
 - **Accessibility** — ARIA `role=combobox`, `aria-expanded`, `aria-activedescendant`, keyboard navigation (↑ ↓ Enter Escape)
 - **Debug mode** — shows `[tablename]` and `[fieldname]` next to the element label (mirrors TYPO3 core behavior)
@@ -110,6 +111,7 @@ Register the form element in your TCA column configuration:
 | `maxResults` | `int` | `20` | Maximum number of AJAX search results. Hard cap: 200. |
 | `previewImage` | `string` | — | FAL field on the foreign table whose first image is shown as a 64×64 thumbnail instead of the record icon. |
 | `allowRootLevel` | `bool` | `false` | When `true`, non-admin editors can see records stored at `pid=0` (site root level). Admin users always have access regardless of this setting. |
+| `allowRemoveInaccessible` | `bool` | `true` | When `true` (default), the remove button is shown for inaccessible records, but clicking it opens a TYPO3 confirmation modal warning that the selection cannot be restored. When `false`, the remove button is hidden entirely for inaccessible records. |
 
 > **Naming convention:** All options added by this extension follow lowerCamelCase (`infoFields`, `searchFields`, `maxResults`, `previewImage`, `allowRootLevel`), consistent with newer TYPO3 core TCA options like `renderType`. The older core options `minitems`, `maxitems`, and `foreign_table` keep their original spelling.
 
@@ -189,7 +191,7 @@ If a complete multi-language visibility check is required for a project, the `re
 
 The element enforces TYPO3 backend permissions at two levels:
 
-**Table-level:** The backend user must have `tables_select` permission for the foreign table. Requests for unknown or inaccessible tables are rejected with HTTP 400.
+**Table-level:** The backend user must have `tables_select` permission for the foreign table. Requests for unknown or inaccessible tables are rejected with HTTP 400. The edit link on selected cards is hidden when the editor lacks `tables_modify` permission.
 
 **Page-level:** Before running any record queries, the endpoint determines which pages (PIDs) the backend user may read. It first collects the distinct PIDs that contain matching records, then checks each one:
 
@@ -200,7 +202,7 @@ Records on inaccessible pages are excluded from all queries, not filtered after 
 
 Root-level records (`pid=0`) are restricted to admin users by default. Set `allowRootLevel=true` in TCA to allow non-admin access.
 
-Security-relevant settings (`allowRootLevel`) are baked into the server-generated AJAX URL at render time and are never sent as client-controlled parameters.
+Security-relevant settings (`allowRootLevel`, `allowRemoveInaccessible`) are baked into the server-generated HTML at render time and are never sent as client-controlled parameters.
 
 ---
 

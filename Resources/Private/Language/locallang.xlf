@@ -13,6 +13,21 @@
 			<trans-unit id="badge.hidden" resname="badge.hidden">
 				<source>hidden</source>
 			</trans-unit>
+			<trans-unit id="badge.no_access" resname="badge.no_access">
+				<source>no access</source>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.title" resname="modal.remove_inaccessible.title">
+				<source>Remove record</source>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.message" resname="modal.remove_inaccessible.message">
+				<source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.confirm" resname="modal.remove_inaccessible.confirm">
+				<source>Remove</source>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.cancel" resname="modal.remove_inaccessible.cancel">
+				<source>Cancel</source>
+			</trans-unit>
 			<trans-unit id="error.unknown_table" resname="error.unknown_table">
 				<source>Unknown table</source>
 			</trans-unit>
