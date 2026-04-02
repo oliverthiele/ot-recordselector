@@ -264,6 +264,10 @@ final class RecordSelectorController
         // language the editor is actually working in.
         // title_secondary = the default-language title when it differs from the
         // translated title — shown as context in the dropdown and on the card.
+        // AJAX results are already filtered through resolveAccessiblePids(), so they are
+        // always accessible. can_edit additionally requires tables_modify on the table.
+        $canModifyTable = $this->getBackendUser()->check('tables_modify', $tableName);
+
         $overlaidRows = [];
         foreach ($allRows as $row) {
             $defaultTitle = $this->rowString($row, $labelField);
@@ -366,7 +370,9 @@ final class RecordSelectorController
                 'icon_identifier' => $this->resolveIconIdentifier($tableName, $row),
                 'pid' => $pid,
                 'page_path' => $this->resolvePagePath($pid),
-                'edit_url' => $this->buildEditUrl($tableName, $uid, $returnUrl),
+                'edit_url' => $canModifyTable ? $this->buildEditUrl($tableName, $uid, $returnUrl) : '',
+                'is_accessible' => true,
+                'can_edit' => $canModifyTable,
                 'info_system' => $infoSystem,
                 'info_translated' => $infoTranslated,
                 'info_default' => $infoDefault,

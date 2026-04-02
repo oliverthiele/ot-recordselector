@@ -12,6 +12,8 @@
  */
 
 import AjaxRequest from '@typo3/core/ajax/ajax-request.js';
+import Modal from '@typo3/backend/modal.js';
+import { SeverityEnum } from '@typo3/backend/enum/severity.js';
 
 const DEBOUNCE_DELAY_MS = 250;
 const MIN_SEARCH_LENGTH = 2;
@@ -37,6 +39,11 @@ class RecordSelectorElement extends HTMLElement {
     this.maxResults = parseInt(this.dataset.maxResults ?? '20', 10);
     this.backendLang = this.dataset.backendLang ?? '0';
     this.previewImageField = this.dataset.previewImageField ?? '';
+    this.allowRemoveInaccessible = this.dataset.allowRemoveInaccessible !== '0';
+    this.modalTitle = this.dataset.modalTitle ?? '';
+    this.modalMessage = this.dataset.modalMessage ?? '';
+    this.modalConfirm = this.dataset.modalConfirm ?? 'Remove';
+    this.modalCancel = this.dataset.modalCancel ?? 'Cancel';
 
     // data-* attributes use kebab-case in HTML; the browser's dataset API automatically
     // converts them to lowerCamelCase (data-info-fields → dataset.infoFields).
@@ -182,6 +189,12 @@ class RecordSelectorElement extends HTMLElement {
         badge.textContent = item.hidden_status === 'hidden' ? 'hidden' : 'partially hidden';
         titleLine.appendChild(badge);
       }
+      if (item.is_accessible === false) {
+        const noAccessBadge = document.createElement('span');
+        noAccessBadge.className = 'badge bg-info ms-1';
+        noAccessBadge.textContent = 'no access';
+        titleLine.appendChild(noAccessBadge);
+      }
       contentWrap.appendChild(titleLine);
 
       // Line 1: system info (uid/pid)
@@ -264,6 +277,9 @@ class RecordSelectorElement extends HTMLElement {
     card.setAttribute('role', 'option');
     card.setAttribute('aria-selected', 'true');
     card.dataset.uid = String(item.uid);
+    if (item.is_accessible === false) {
+      card.dataset.accessible = '0';
+    }
 
     const cardInner = document.createElement('div');
     cardInner.className = 'card mb-1';
@@ -309,6 +325,12 @@ class RecordSelectorElement extends HTMLElement {
       badge.textContent = item.hidden_status === 'hidden' ? 'hidden' : 'partially hidden';
       titleRow.appendChild(badge);
     }
+    if (item.is_accessible === false) {
+      const noAccessBadge = document.createElement('span');
+      noAccessBadge.className = 'badge bg-info ms-1';
+      noAccessBadge.textContent = 'no access';
+      titleRow.appendChild(noAccessBadge);
+    }
 
     contentCol.appendChild(titleRow);
 
@@ -349,7 +371,7 @@ class RecordSelectorElement extends HTMLElement {
     const actionsCol = document.createElement('div');
     actionsCol.className = 'flex-shrink-0 d-flex gap-1 align-items-start';
 
-    if (item.edit_url) {
+    if (item.edit_url && item.can_edit !== false) {
       const editLink = document.createElement('a');
       editLink.href = item.edit_url;
       editLink.className = 'btn btn-default btn-sm';
@@ -358,12 +380,15 @@ class RecordSelectorElement extends HTMLElement {
       actionsCol.appendChild(editLink);
     }
 
-    const removeButton = document.createElement('button');
-    removeButton.type = 'button';
-    removeButton.className = 'btn btn-default btn-sm ot-recordselector-card-remove';
-    removeButton.setAttribute('aria-label', `Remove ${item.title || item.uid}`);
-    removeButton.innerHTML = '<typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>';
-    actionsCol.appendChild(removeButton);
+    const showRemove = item.is_accessible !== false || this.allowRemoveInaccessible;
+    if (showRemove) {
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'btn btn-default btn-sm ot-recordselector-card-remove';
+      removeButton.setAttribute('aria-label', `Remove ${item.title || item.uid}`);
+      removeButton.innerHTML = '<typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>';
+      actionsCol.appendChild(removeButton);
+    }
 
     cardBody.appendChild(actionsCol);
     cardInner.appendChild(cardBody);
@@ -380,18 +405,48 @@ class RecordSelectorElement extends HTMLElement {
     }
 
     removeButton.addEventListener('click', () => {
-      card.remove();
+      const isAccessible = card.dataset.accessible !== '0';
 
-      if (this.maxItems === 1) {
-        this.hiddenInput.value = '0';
-        this.inputGroup.style.display = '';
-        this.searchInput.focus();
+      if (!isAccessible && this.allowRemoveInaccessible) {
+        // Show confirmation modal before removing an inaccessible record
+        Modal.confirm(
+          this.modalTitle,
+          this.modalMessage,
+          SeverityEnum.warning,
+          [
+            {
+              text: this.modalCancel,
+              btnClass: 'btn-default',
+              trigger: (event, modal) => modal.hideModal(),
+            },
+            {
+              text: this.modalConfirm,
+              btnClass: 'btn-warning',
+              trigger: (event, modal) => {
+                this.removeCard(card);
+                modal.hideModal();
+              },
+            },
+          ]
+        );
       } else {
-        this.rebuildHiddenValue();
+        this.removeCard(card);
       }
-
-      this.hiddenInput.dispatchEvent(new Event('change', {bubbles: true}));
     });
+  }
+
+  removeCard(card) {
+    card.remove();
+
+    if (this.maxItems === 1) {
+      this.hiddenInput.value = '0';
+      this.inputGroup.style.display = '';
+      this.searchInput.focus();
+    } else {
+      this.rebuildHiddenValue();
+    }
+
+    this.hiddenInput.dispatchEvent(new Event('change', {bubbles: true}));
   }
 
   rebuildHiddenValue() {

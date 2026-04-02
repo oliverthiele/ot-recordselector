@@ -12,6 +12,7 @@ use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Resource\ProcessedFile;
+use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 
@@ -66,6 +67,10 @@ final class RecordSelectorElement extends AbstractFormElement
         // for non-admin editors. Admins always have access regardless of this setting.
         // Default: false — root-level records are restricted to admins.
         $allowRootLevel = (bool)($fieldConfig['allowRootLevel'] ?? false);
+        // When false, the remove button is hidden for records on pages the editor cannot access.
+        // When true (default), the remove button is shown with a confirmation dialog warning
+        // that the selection cannot be restored after removal.
+        $allowRemoveInaccessible = (bool)($fieldConfig['allowRemoveInaccessible'] ?? true);
 
         $tableName = (string)($fieldConfig['foreign_table'] ?? '');
         if ($tableName === '' || !$this->tableExistsInTca($tableName)) {
@@ -91,6 +96,21 @@ final class RecordSelectorElement extends AbstractFormElement
         $hiddenLabel = $this->getLanguageService()->sL(
             'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:badge.hidden'
         );
+        $noAccessLabel = $this->getLanguageService()->sL(
+            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:badge.no_access'
+        );
+        $modalTitle = $this->getLanguageService()->sL(
+            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.title'
+        );
+        $modalMessage = $this->getLanguageService()->sL(
+            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.message'
+        );
+        $modalConfirm = $this->getLanguageService()->sL(
+            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.confirm'
+        );
+        $modalCancel = $this->getLanguageService()->sL(
+            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.cancel'
+        );
 
         // Display language = always the backend user's preferred language.
         // Mirrors the controller logic so the server-rendered card matches the AJAX results.
@@ -112,8 +132,11 @@ final class RecordSelectorElement extends AbstractFormElement
                 $recordData['info_system'],
                 $recordData['info_translated'],
                 $recordData['info_default'],
+                $recordData['is_accessible'],
+                $allowRemoveInaccessible,
                 $removeLabel,
                 $hiddenLabel,
+                $noAccessLabel,
                 $isDebugMode,
             );
             if ($maxItems === 1) {
@@ -142,8 +165,13 @@ final class RecordSelectorElement extends AbstractFormElement
             $searchFields,
             $maxResults,
             $previewImageField,
+            $allowRemoveInaccessible,
             $tableLabel,
             $placeholder,
+            $modalTitle,
+            $modalMessage,
+            $modalConfirm,
+            $modalCancel,
             $initialCard,
             $inputVisible,
             $isDebugMode,
@@ -175,8 +203,11 @@ final class RecordSelectorElement extends AbstractFormElement
         array $infoSystem,
         array $infoTranslated,
         array $infoDefault,
+        bool $isAccessible,
+        bool $allowRemoveInaccessible,
         string $removeLabel,
         string $hiddenLabel,
+        string $noAccessLabel,
         bool $isDebugMode = false,
     ): string {
         $uidEncoded = htmlspecialchars((string)$uid, ENT_QUOTES);
@@ -191,6 +222,13 @@ final class RecordSelectorElement extends AbstractFormElement
             'partial' => '<span class="badge bg-secondary ms-1">partially hidden</span>',
             default   => '',
         };
+        $noAccessBadge = !$isAccessible
+            ? '<span class="badge bg-info ms-1">' . htmlspecialchars($noAccessLabel, ENT_QUOTES) . '</span>'
+            : '';
+        // When allowRemoveInaccessible is false and the record is not accessible,
+        // the remove button is hidden — the editor cannot restore the selection.
+        $showRemoveButton = $isAccessible || $allowRemoveInaccessible;
+        $accessibleAttr = $isAccessible ? '' : ' data-accessible="0"';
 
         $editButton = $editUrl !== ''
             ? '<a href="' . $editUrlEncoded . '" class="btn btn-default btn-sm" title="Edit record">'
@@ -252,8 +290,16 @@ final class RecordSelectorElement extends AbstractFormElement
             $iconOrImage = '<typo3-backend-icon identifier="' . $iconIdentifierEncoded . '" size="small"></typo3-backend-icon>';
         }
 
+        $removeButton = $showRemoveButton
+            ? '<button type="button"
+                        class="btn btn-default btn-sm ot-recordselector-card-remove"
+                        aria-label="' . $removeLabelEncoded . '">
+                    <typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>
+                </button>'
+            : '';
+
         return <<<HTML
-<li class="ot-recordselector-card" role="option" aria-selected="true" data-uid="{$uidEncoded}">
+<li class="ot-recordselector-card" role="option" aria-selected="true" data-uid="{$uidEncoded}"{$accessibleAttr}>
     <div class="card mb-1">
         <div class="card-body p-2 d-flex align-items-start gap-2">
             <div class="flex-shrink-0">
@@ -261,7 +307,7 @@ final class RecordSelectorElement extends AbstractFormElement
             </div>
             <div class="flex-grow-1 overflow-hidden">
                 <div class="d-flex align-items-center gap-1 fw-bold text-truncate">
-                    {$titleEncoded}{$hiddenBadge}
+                    {$titleEncoded}{$hiddenBadge}{$noAccessBadge}
                 </div>
                 <div class="text-muted small">{$systemLine}</div>
                 {$translatedLineHtml}
@@ -269,11 +315,7 @@ final class RecordSelectorElement extends AbstractFormElement
             </div>
             <div class="flex-shrink-0 d-flex gap-1 align-items-start">
                 {$editButton}
-                <button type="button"
-                        class="btn btn-default btn-sm ot-recordselector-card-remove"
-                        aria-label="{$removeLabelEncoded}">
-                    <typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>
-                </button>
+                {$removeButton}
             </div>
         </div>
     </div>
@@ -298,8 +340,13 @@ HTML;
         string $searchFields,
         int $maxResults,
         string $previewImageField,
+        bool $allowRemoveInaccessible,
         string $tableLabel,
         string $placeholder,
+        string $modalTitle,
+        string $modalMessage,
+        string $modalConfirm,
+        string $modalCancel,
         string $initialCard,
         bool $inputVisible,
         bool $isDebugMode,
@@ -337,6 +384,11 @@ HTML;
         $infoFieldsEncoded = htmlspecialchars(implode(',', $infoFields), ENT_QUOTES);
         $searchFieldsEncoded = htmlspecialchars($searchFields, ENT_QUOTES);
         $previewImageFieldEncoded = htmlspecialchars($previewImageField, ENT_QUOTES);
+        $allowRemoveInaccessibleEncoded = $allowRemoveInaccessible ? '1' : '0';
+        $modalTitleEncoded = htmlspecialchars($modalTitle, ENT_QUOTES);
+        $modalMessageEncoded = htmlspecialchars($modalMessage, ENT_QUOTES);
+        $modalConfirmEncoded = htmlspecialchars($modalConfirm, ENT_QUOTES);
+        $modalCancelEncoded = htmlspecialchars($modalCancel, ENT_QUOTES);
 
         return <<<HTML
 <typo3-ot-recordselector id="{$fieldIdEncoded}"
@@ -349,6 +401,11 @@ HTML;
      data-search-fields="{$searchFieldsEncoded}"
      data-max-results="{$maxResults}"
      data-preview-image-field="{$previewImageFieldEncoded}"
+     data-allow-remove-inaccessible="{$allowRemoveInaccessibleEncoded}"
+     data-modal-title="{$modalTitleEncoded}"
+     data-modal-message="{$modalMessageEncoded}"
+     data-modal-confirm="{$modalConfirmEncoded}"
+     data-modal-cancel="{$modalCancelEncoded}"
      style="display:block;position:relative">
 
     <p class="ot-recordselector-label mb-1"><strong>{$tableLabelEncoded}</strong>{$debugInfo}{$flexFieldDebug}</p>
@@ -394,7 +451,7 @@ HTML;
      * Loads the record from DB and returns all data needed to render the card.
      *
      * @param list<string> $infoFields
-     * @return array{title: string, icon_identifier: string, image_url: string|null, pid: int, page_path: string, edit_url: string, hidden_status: 'hidden'|'partial'|null, info_system: list<array{label: string, field: string, value: string}>, info_translated: list<array{label: string, field: string, value: string}>, info_default: list<array{label: string, field: string, value: string}>}
+     * @return array{title: string, icon_identifier: string, image_url: string|null, pid: int, page_path: string, edit_url: string, hidden_status: 'hidden'|'partial'|null, is_accessible: bool, can_edit: bool, info_system: list<array{label: string, field: string, value: string}>, info_translated: list<array{label: string, field: string, value: string}>, info_default: list<array{label: string, field: string, value: string}>}
      */
     private function resolveRecordData(string $tableName, int $uid, int $languageUid, array $infoFields, string $previewImageField = ''): array
     {
@@ -453,6 +510,8 @@ HTML;
 
         $title = $this->rowString($row, $labelField);
         $pid = $this->rowInt($row, 'pid');
+        $isAccessible = $this->isPidAccessible($pid);
+        $canEdit = $isAccessible && $this->getBackendUser()->check('tables_modify', $tableName);
         $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
 
         $infoSystem = $this->buildInfoItems($tableName, $row, $uid, $systemInfoFields);
@@ -476,8 +535,10 @@ HTML;
                 : null,
             'pid' => $pid,
             'page_path' => $pid > 0 ? $this->resolvePagePath($pid) : '',
-            'edit_url' => $this->buildEditUrl($tableName, $uid),
+            'edit_url' => $canEdit ? $this->buildEditUrl($tableName, $uid) : '',
             'hidden_status' => $hiddenStatus,
+            'is_accessible' => $isAccessible,
+            'can_edit' => $canEdit,
             'info_system' => $infoSystem,
             'info_translated' => $infoTranslated,
             'info_default' => $infoDefault,
@@ -581,6 +642,21 @@ HTML;
             'edit' => [$tableName => [$uid => 'edit']],
             'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
         ]);
+    }
+
+    private function isPidAccessible(int $pid): bool
+    {
+        if ($pid === 0) {
+            return $this->getBackendUser()->isAdmin();
+        }
+        $backendUser = $this->getBackendUser();
+        if (!$backendUser->isInWebMount($pid)) {
+            return false;
+        }
+        return (bool)BackendUtility::readPageAccess(
+            $pid,
+            $backendUser->getPagePermsClause(Permission::PAGE_SHOW)
+        );
     }
 
     private function resolvePagePath(int $pid): string

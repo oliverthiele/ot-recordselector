@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] — 2026-04-02
+
+### Added
+
+- Permission-aware edit button — the edit link on selected cards is hidden when the backend user lacks `tables_modify` permission for the record's table
+- "No access" badge — cards for records on pages the backend user cannot access display a `no access` badge (info/blue)
+- Confirmation modal before removing inaccessible records — when a record is on a page the editor cannot access, a TYPO3-native warning modal warns that removing the record makes the selection unrestorable
+- `allowRemoveInaccessible` TCA option — controls whether non-admin editors can remove inaccessible records; when `false`, the remove button is hidden entirely; defaults to `true` (show button with confirmation modal)
+- PHPStan Level 9 compliance — upgraded from Level 8; all type-narrowing issues resolved
+
 ## [1.0.1] — 2026-04-02
 
 ### Fixed
@@ -40,5 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `allowRootLevel` TCA option — controls whether non-admin editors can access records stored at `pid=0`; defaults to `false`; security-relevant value is baked into the server-generated AJAX URL, never sent as a client parameter
 - PHPStan Level 8 compliance
 
+[1.1.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.1.0
 [1.0.1]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.1
 [1.0.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.0

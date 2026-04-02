@@ -16,6 +16,26 @@
 				<source>hidden</source>
 				<target>versteckt</target>
 			</trans-unit>
+			<trans-unit id="badge.no_access" resname="badge.no_access" approved="yes">
+				<source>no access</source>
+				<target>kein Zugriff</target>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.title" resname="modal.remove_inaccessible.title" approved="yes">
+				<source>Remove record</source>
+				<target>Datensatz entfernen</target>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.message" resname="modal.remove_inaccessible.message" approved="yes">
+				<source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
+				<target>Dieser Datensatz befindet sich auf einer Seite, auf die Sie keinen Zugriff haben. Das Entfernen macht es unmöglich, diese Auswahl wiederherzustellen.</target>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.confirm" resname="modal.remove_inaccessible.confirm" approved="yes">
+				<source>Remove</source>
+				<target>Entfernen</target>
+			</trans-unit>
+			<trans-unit id="modal.remove_inaccessible.cancel" resname="modal.remove_inaccessible.cancel" approved="yes">
+				<source>Cancel</source>
+				<target>Abbrechen</target>
+			</trans-unit>
 			<trans-unit id="error.unknown_table" resname="error.unknown_table" approved="yes">
 				<source>Unknown table</source>
 				<target>Unbekannte Tabelle</target>
