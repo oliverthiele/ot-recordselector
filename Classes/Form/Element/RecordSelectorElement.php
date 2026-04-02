@@ -253,7 +253,7 @@ final class RecordSelectorElement extends AbstractFormElement
         }
 
         return <<<HTML
-<li class="ot-recordselector__card" role="option" aria-selected="true" data-uid="{$uidEncoded}">
+<li class="ot-recordselector-card" role="option" aria-selected="true" data-uid="{$uidEncoded}">
     <div class="card mb-1">
         <div class="card-body p-2 d-flex align-items-start gap-2">
             <div class="flex-shrink-0">
@@ -270,7 +270,7 @@ final class RecordSelectorElement extends AbstractFormElement
             <div class="flex-shrink-0 d-flex gap-1 align-items-start">
                 {$editButton}
                 <button type="button"
-                        class="btn btn-default btn-sm ot-recordselector__card-remove"
+                        class="btn btn-default btn-sm ot-recordselector-card-remove"
                         aria-label="{$removeLabelEncoded}">
                     <typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>
                 </button>
@@ -351,21 +351,21 @@ HTML;
      data-preview-image-field="{$previewImageFieldEncoded}"
      style="display:block;position:relative">
 
-    <p class="ot-recordselector__label mb-1"><strong>{$tableLabelEncoded}</strong>{$debugInfo}{$flexFieldDebug}</p>
+    <p class="ot-recordselector-label mb-1"><strong>{$tableLabelEncoded}</strong>{$debugInfo}{$flexFieldDebug}</p>
 
-    <ul class="ot-recordselector__cards list-unstyled mb-1"
+    <ul class="ot-recordselector-cards list-unstyled mb-1"
         role="listbox"
         aria-label="{$tableLabelEncoded}"
         aria-multiselectable="true">
         {$initialCard}
     </ul>
 
-    <div class="input-group ot-recordselector__input-group" style="{$inputStyle}">
+    <div class="input-group ot-recordselector-input-group" style="{$inputStyle}">
         <span class="input-group-text">
             <typo3-backend-icon identifier="actions-search" size="small"></typo3-backend-icon>
         </span>
         <input type="text"
-               class="form-control ot-recordselector__search"
+               class="form-control ot-recordselector-search"
                placeholder="{$placeholderEncoded}"
                autocomplete="off"
                role="combobox"
@@ -376,7 +376,7 @@ HTML;
                aria-haspopup="listbox" />
     </div>
 
-    <ul class="ot-recordselector__dropdown list-group"
+    <ul class="ot-recordselector-dropdown list-group"
         id="{$dropdownIdEncoded}"
         role="listbox"
         aria-label="{$tableLabelEncoded}"
@@ -385,7 +385,7 @@ HTML;
     <input type="hidden"
            name="{$fieldNameEncoded}"
            value="{$currentValueEncoded}"
-           class="ot-recordselector__value" />
+           class="ot-recordselector-value" />
 </typo3-ot-recordselector>
 HTML;
     }

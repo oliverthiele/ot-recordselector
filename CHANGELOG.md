@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] — 2026-04-02
+
+### Fixed
+
+- CSS class names renamed from BEM double-underscore (`ot-recordselector__*`) to single-hyphen (`ot-recordselector-*`) — consistent with Bootstrap and TYPO3 core conventions
+
 ## [1.0.0] — 2026-04-01
 
 ### Added
@@ -34,4 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `allowRootLevel` TCA option — controls whether non-admin editors can access records stored at `pid=0`; defaults to `false`; security-relevant value is baked into the server-generated AJAX URL, never sent as a client parameter
 - PHPStan Level 8 compliance
 
+[1.0.1]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.1
 [1.0.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.0

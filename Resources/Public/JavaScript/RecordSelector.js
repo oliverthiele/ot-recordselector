@@ -18,11 +18,11 @@ const MIN_SEARCH_LENGTH = 2;
 
 class RecordSelectorElement extends HTMLElement {
   connectedCallback() {
-    this.cardsContainer = this.querySelector('.ot-recordselector__cards');
-    this.inputGroup = this.querySelector('.ot-recordselector__input-group');
-    this.searchInput = this.querySelector('.ot-recordselector__search');
-    this.dropdown = this.querySelector('.ot-recordselector__dropdown');
-    this.hiddenInput = this.querySelector('.ot-recordselector__value');
+    this.cardsContainer = this.querySelector('.ot-recordselector-cards');
+    this.inputGroup = this.querySelector('.ot-recordselector-input-group');
+    this.searchInput = this.querySelector('.ot-recordselector-search');
+    this.dropdown = this.querySelector('.ot-recordselector-dropdown');
+    this.hiddenInput = this.querySelector('.ot-recordselector-value');
 
     if (!this.searchInput || !this.dropdown || !this.hiddenInput) {
       return;
@@ -46,7 +46,7 @@ class RecordSelectorElement extends HTMLElement {
     this.currentResults = [];
 
     // Wire up remove buttons on server-rendered cards
-    this.cardsContainer.querySelectorAll('.ot-recordselector__card').forEach((card) => {
+    this.cardsContainer.querySelectorAll('.ot-recordselector-card').forEach((card) => {
       this.bindCardRemoveButton(card);
     });
 
@@ -145,7 +145,7 @@ class RecordSelectorElement extends HTMLElement {
     items.forEach((item, index) => {
       const optionId = `${this.id}-option-${index}`;
       const listItem = document.createElement('li');
-      listItem.className = 'list-group-item list-group-item-action ot-recordselector__option d-flex align-items-center gap-2 py-1';
+      listItem.className = 'list-group-item list-group-item-action ot-recordselector-option d-flex align-items-center gap-2 py-1';
       listItem.setAttribute('role', 'option');
       listItem.setAttribute('id', optionId);
       listItem.setAttribute('aria-selected', 'false');
@@ -260,7 +260,7 @@ class RecordSelectorElement extends HTMLElement {
 
   addCard(item) {
     const card = document.createElement('li');
-    card.className = 'ot-recordselector__card';
+    card.className = 'ot-recordselector-card';
     card.setAttribute('role', 'option');
     card.setAttribute('aria-selected', 'true');
     card.dataset.uid = String(item.uid);
@@ -360,7 +360,7 @@ class RecordSelectorElement extends HTMLElement {
 
     const removeButton = document.createElement('button');
     removeButton.type = 'button';
-    removeButton.className = 'btn btn-default btn-sm ot-recordselector__card-remove';
+    removeButton.className = 'btn btn-default btn-sm ot-recordselector-card-remove';
     removeButton.setAttribute('aria-label', `Remove ${item.title || item.uid}`);
     removeButton.innerHTML = '<typo3-backend-icon identifier="actions-close" size="small"></typo3-backend-icon>';
     actionsCol.appendChild(removeButton);
@@ -374,7 +374,7 @@ class RecordSelectorElement extends HTMLElement {
   }
 
   bindCardRemoveButton(card) {
-    const removeButton = card.querySelector('.ot-recordselector__card-remove');
+    const removeButton = card.querySelector('.ot-recordselector-card-remove');
     if (!removeButton) {
       return;
     }
@@ -396,13 +396,13 @@ class RecordSelectorElement extends HTMLElement {
 
   rebuildHiddenValue() {
     const uids = Array.from(
-      this.cardsContainer.querySelectorAll('.ot-recordselector__card')
+      this.cardsContainer.querySelectorAll('.ot-recordselector-card')
     ).map((card) => card.dataset.uid);
     this.hiddenInput.value = uids.join(',');
   }
 
   setActiveIndex(newIndex) {
-    const options = this.dropdown.querySelectorAll('.ot-recordselector__option');
+    const options = this.dropdown.querySelectorAll('.ot-recordselector-option');
     if (this.activeIndex >= 0 && options[this.activeIndex]) {
       options[this.activeIndex].classList.remove('active');
       options[this.activeIndex].setAttribute('aria-selected', 'false');
