@@ -199,7 +199,7 @@ final class RecordSelectorElement extends AbstractFormElement
         ?string $imageUrl,
         string $pagePath,
         string $editUrl,
-        string|null $hiddenStatus,
+        ?string $hiddenStatus,
         array $infoSystem,
         array $infoTranslated,
         array $infoDefault,
