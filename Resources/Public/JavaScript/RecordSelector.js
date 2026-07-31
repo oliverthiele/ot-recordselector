@@ -44,6 +44,9 @@ class RecordSelectorElement extends HTMLElement {
     this.modalMessage = this.dataset.modalMessage ?? '';
     this.modalConfirm = this.dataset.modalConfirm ?? 'Remove';
     this.modalCancel = this.dataset.modalCancel ?? 'Cancel';
+    this.hiddenLabel = this.dataset.hiddenLabel ?? 'hidden';
+    this.partiallyHiddenLabel = this.dataset.partiallyHiddenLabel ?? 'partially hidden';
+    this.noAccessLabel = this.dataset.noAccessLabel ?? 'no access';
 
     // data-* attributes use kebab-case in HTML; the browser's dataset API automatically
     // converts them to lowerCamelCase (data-info-fields → dataset.infoFields).
@@ -186,13 +189,13 @@ class RecordSelectorElement extends HTMLElement {
         badge.className = item.hidden_status === 'hidden'
           ? 'badge bg-warning ms-1'
           : 'badge bg-secondary ms-1';
-        badge.textContent = item.hidden_status === 'hidden' ? 'hidden' : 'partially hidden';
+        badge.textContent = item.hidden_status === 'hidden' ? this.hiddenLabel : this.partiallyHiddenLabel;
         titleLine.appendChild(badge);
       }
       if (item.is_accessible === false) {
         const noAccessBadge = document.createElement('span');
         noAccessBadge.className = 'badge bg-info ms-1';
-        noAccessBadge.textContent = 'no access';
+        noAccessBadge.textContent = this.noAccessLabel;
         titleLine.appendChild(noAccessBadge);
       }
       contentWrap.appendChild(titleLine);
@@ -322,13 +325,13 @@ class RecordSelectorElement extends HTMLElement {
       badge.className = item.hidden_status === 'hidden'
         ? 'badge bg-warning ms-1'
         : 'badge bg-secondary ms-1';
-      badge.textContent = item.hidden_status === 'hidden' ? 'hidden' : 'partially hidden';
+      badge.textContent = item.hidden_status === 'hidden' ? this.hiddenLabel : this.partiallyHiddenLabel;
       titleRow.appendChild(badge);
     }
     if (item.is_accessible === false) {
       const noAccessBadge = document.createElement('span');
       noAccessBadge.className = 'badge bg-info ms-1';
-      noAccessBadge.textContent = 'no access';
+      noAccessBadge.textContent = this.noAccessLabel;
       titleRow.appendChild(noAccessBadge);
     }
 

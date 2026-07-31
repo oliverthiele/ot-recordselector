@@ -87,30 +87,16 @@ final class RecordSelectorElement extends AbstractFormElement
         $tableLabel = $this->getLanguageService()->sL(
             $this->getTcaCtrlString($tableName, 'title', $tableName)
         );
-        $placeholder = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:element.placeholder'
-        );
-        $removeLabel = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:chip.remove'
-        );
-        $hiddenLabel = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:badge.hidden'
-        );
-        $noAccessLabel = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:badge.no_access'
-        );
-        $modalTitle = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.title'
-        );
-        $modalMessage = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.message'
-        );
-        $modalConfirm = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.confirm'
-        );
-        $modalCancel = $this->getLanguageService()->sL(
-            'LLL:EXT:ot_recordselector/Resources/Private/Language/locallang.xlf:modal.remove_inaccessible.cancel'
-        );
+        $placeholder = $this->getLanguageService()->sL('ot_recordselector.messages:element.placeholder');
+        $removeLabel = $this->getLanguageService()->sL('ot_recordselector.messages:chip.remove');
+        $editLabel = $this->getLanguageService()->sL('ot_recordselector.messages:button.edit');
+        $hiddenLabel = $this->getLanguageService()->sL('ot_recordselector.messages:badge.hidden');
+        $partiallyHiddenLabel = $this->getLanguageService()->sL('ot_recordselector.messages:badge.partiallyHidden');
+        $noAccessLabel = $this->getLanguageService()->sL('ot_recordselector.messages:badge.noAccess');
+        $modalTitle = $this->getLanguageService()->sL('ot_recordselector.messages:modal.removeInaccessible.title');
+        $modalMessage = $this->getLanguageService()->sL('ot_recordselector.messages:modal.removeInaccessible.message');
+        $modalConfirm = $this->getLanguageService()->sL('ot_recordselector.messages:modal.removeInaccessible.confirm');
+        $modalCancel = $this->getLanguageService()->sL('ot_recordselector.messages:modal.removeInaccessible.cancel');
 
         // Display language = always the backend user's preferred language.
         // Mirrors the controller logic so the server-rendered card matches the AJAX results.
@@ -135,7 +121,9 @@ final class RecordSelectorElement extends AbstractFormElement
                 $recordData['is_accessible'],
                 $allowRemoveInaccessible,
                 $removeLabel,
+                $editLabel,
                 $hiddenLabel,
+                $partiallyHiddenLabel,
                 $noAccessLabel,
                 $isDebugMode,
             );
@@ -172,6 +160,9 @@ final class RecordSelectorElement extends AbstractFormElement
             $modalMessage,
             $modalConfirm,
             $modalCancel,
+            $hiddenLabel,
+            $partiallyHiddenLabel,
+            $noAccessLabel,
             $initialCard,
             $inputVisible,
             $isDebugMode,
@@ -206,7 +197,9 @@ final class RecordSelectorElement extends AbstractFormElement
         bool $isAccessible,
         bool $allowRemoveInaccessible,
         string $removeLabel,
+        string $editLabel,
         string $hiddenLabel,
+        string $partiallyHiddenLabel,
         string $noAccessLabel,
         bool $isDebugMode = false,
     ): string {
@@ -219,7 +212,7 @@ final class RecordSelectorElement extends AbstractFormElement
 
         $hiddenBadge = match ($hiddenStatus) {
             'hidden'  => '<span class="badge bg-warning ms-1">' . htmlspecialchars($hiddenLabel, ENT_QUOTES) . '</span>',
-            'partial' => '<span class="badge bg-secondary ms-1">partially hidden</span>',
+            'partial' => '<span class="badge bg-secondary ms-1">' . htmlspecialchars($partiallyHiddenLabel, ENT_QUOTES) . '</span>',
             default   => '',
         };
         $noAccessBadge = !$isAccessible
@@ -231,7 +224,7 @@ final class RecordSelectorElement extends AbstractFormElement
         $accessibleAttr = $isAccessible ? '' : ' data-accessible="0"';
 
         $editButton = $editUrl !== ''
-            ? '<a href="' . $editUrlEncoded . '" class="btn btn-default btn-sm" title="Edit record">'
+            ? '<a href="' . $editUrlEncoded . '" class="btn btn-default btn-sm" title="' . htmlspecialchars($editLabel, ENT_QUOTES) . '">'
               . '<typo3-backend-icon identifier="actions-open" size="small"></typo3-backend-icon>'
               . '</a>'
             : '';
@@ -347,6 +340,9 @@ HTML;
         string $modalMessage,
         string $modalConfirm,
         string $modalCancel,
+        string $hiddenLabel,
+        string $partiallyHiddenLabel,
+        string $noAccessLabel,
         string $initialCard,
         bool $inputVisible,
         bool $isDebugMode,
@@ -389,6 +385,11 @@ HTML;
         $modalMessageEncoded = htmlspecialchars($modalMessage, ENT_QUOTES);
         $modalConfirmEncoded = htmlspecialchars($modalConfirm, ENT_QUOTES);
         $modalCancelEncoded = htmlspecialchars($modalCancel, ENT_QUOTES);
+        // The badges are rendered twice: server-side for the pre-selected record and
+        // client-side for AJAX results, so the JS needs the same labels.
+        $hiddenLabelEncoded = htmlspecialchars($hiddenLabel, ENT_QUOTES);
+        $partiallyHiddenLabelEncoded = htmlspecialchars($partiallyHiddenLabel, ENT_QUOTES);
+        $noAccessLabelEncoded = htmlspecialchars($noAccessLabel, ENT_QUOTES);
 
         return <<<HTML
 <typo3-ot-recordselector id="{$fieldIdEncoded}"
@@ -406,6 +407,9 @@ HTML;
      data-modal-message="{$modalMessageEncoded}"
      data-modal-confirm="{$modalConfirmEncoded}"
      data-modal-cancel="{$modalCancelEncoded}"
+     data-hidden-label="{$hiddenLabelEncoded}"
+     data-partially-hidden-label="{$partiallyHiddenLabelEncoded}"
+     data-no-access-label="{$noAccessLabelEncoded}"
      style="display:block;position:relative">
 
     <p class="ot-recordselector-label mb-1"><strong>{$tableLabelEncoded}</strong>{$debugInfo}{$flexFieldDebug}</p>
