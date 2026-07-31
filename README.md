@@ -2,7 +2,7 @@
 
 A custom backend form element for TYPO3 that lets editors search and select records by name — **showing translated titles and field values in the editor's own language**, with relevance ranking, configurable info fields, preview images, and TYPO3-native card display.
 
-[![TYPO3](https://img.shields.io/badge/TYPO3-13.4-orange.svg)](https://typo3.org/)
+[![TYPO3](https://img.shields.io/badge/TYPO3-14.3-orange.svg)](https://typo3.org/)
 [![Packagist Version](https://img.shields.io/packagist/v/oliverthiele/ot-recordselector.svg)](https://packagist.org/packages/oliverthiele/ot-recordselector)
 [![PHP](https://img.shields.io/packagist/dependency-v/oliverthiele/ot-recordselector/php.svg)](https://php.net/)
 [![License](https://img.shields.io/packagist/l/oliverthiele/ot-recordselector.svg)](LICENSE)
@@ -59,8 +59,8 @@ OT Record Selector takes a different approach:
 
 | Requirement | Version |
 |---|---|
-| TYPO3 | 13.4+ |
-| PHP | 8.3+ |
+| TYPO3 | 14.3+ |
+| PHP | 8.4+ |
 
 No additional dependencies. The element uses `@typo3/core/ajax/ajax-request.js` and `<typo3-backend-icon>` from TYPO3 core.
 
@@ -98,6 +98,40 @@ Register the form element in your TCA column configuration:
     ],
 ],
 ```
+
+### Database column must be declared manually
+
+`type=user` is not one of the TCA field types TYPO3 core auto-generates a
+database column for. Core's schema enrichment
+(`TYPO3\CMS\Core\Database\Schema\DefaultTcaSchema`) has a dedicated case for
+`select`/`group`/`inline`/`category`/`file` and several others, but **none for
+`user`** — so setting `foreign_table` here has no effect on the database
+schema, unlike a real `type=select` relation.
+
+You must declare the storage column yourself in the consuming extension's
+`ext_tables.sql`:
+
+```sql
+CREATE TABLE tx_myext_domain_model_record
+(
+	my_field int(10) unsigned DEFAULT '0' NOT NULL,
+);
+```
+
+If this declaration is missing or gets accidentally removed, the column can
+still exist in the live database (e.g. left over from before the field was
+converted to `otRecordSelector`, or created manually) — but because Core no
+longer expects it, running `database:updateschema` and confirming the
+"remove" step will rename it to `zzz_deleted_my_field` instead of dropping it
+outright. The data survives, but Extbase silently drops the property during
+hydration (no matching column map), so the corresponding getter returns
+`null` — or throws a `TypeError` if its return type isn't nullable.
+
+This is the trade-off for the performance win over `type=select` with a large
+`foreign_table`: you keep the fast, ranked search, but you take over the
+schema bookkeeping that Core would otherwise do for you. Always add the
+column to `ext_tables.sql` explicitly, and re-verify it after any TCA field
+type change (`select` → `user` or back).
 
 ### All TCA options
 

@@ -56,7 +56,8 @@ final class RecordSelectorController
         private readonly UriBuilder $uriBuilder,
         private readonly LanguageServiceFactory $languageServiceFactory,
         private readonly FileRepository $fileRepository,
-    ) {}
+    ) {
+    }
 
     public function searchAction(ServerRequestInterface $request): ResponseInterface
     {

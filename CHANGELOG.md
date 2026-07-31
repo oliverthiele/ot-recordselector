@@ -5,7 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.0] — 2026-04-02
+## [2.0.0] — 2026-07-31
+
+### Changed
+
+- **Breaking:** Drop TYPO3 v13 support, require TYPO3 `^14.3`
+- **Breaking:** Raise the PHP minimum to `>=8.4`
+- **Breaking:** Rename the label keys that used underscores to lowerCamelCase:
+  `badge.no_access` → `badge.noAccess`, `error.unknown_table` →
+  `error.unknownTable`, `error.access_denied` → `error.accessDenied` and
+  `modal.remove_inaccessible.*` → `modal.removeInaccessible.*`. Only relevant
+  for projects that override these labels
+- Migrate the language files from XLIFF 1.2 to XLIFF 2.0
+- Reference labels via translation domain mapping — `ot_recordselector.messages:`
+  replaces the full `LLL:EXT:` paths
+
+### Fixed
+
+- The badges for hidden, partially hidden and inaccessible records were
+  hardcoded in English in the JavaScript, so search results and newly selected
+  records showed English labels even in a German backend, while the
+  server-rendered card next to them was translated. The labels are now handed to
+  the client via data attributes
+- `partially hidden` was hardcoded in the PHP card renderer as well and had no
+  label key at all. Added as `badge.partiallyHidden`
+- The edit button's `title` attribute was hardcoded as `Edit record`. Added as
+  `button.edit`
+- Removed the hardcoded `version` field from `composer.json`. It conflicts with
+  the Git tag as the version source and prevents the package from being aliased
+  when it is consumed from a path repository
+- `ext_emconf.php` declared no PHP constraint, and its TYPO3 constraint was
+  capped at `13.4.99` while `composer.json` already allowed v14
+
+
 
 ### Added
 
@@ -50,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `allowRootLevel` TCA option — controls whether non-admin editors can access records stored at `pid=0`; defaults to `false`; security-relevant value is baked into the server-generated AJAX URL, never sent as a client parameter
 - PHPStan Level 8 compliance
 
+[2.0.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/2.0.0
 [1.1.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.1.0
 [1.0.1]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.1
 [1.0.0]: https://github.com/oliverthiele/ot-recordselector/releases/tag/1.0.0

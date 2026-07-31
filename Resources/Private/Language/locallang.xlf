@@ -1,39 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" datatype="plaintext"
-	      original="EXT:ot_recordselector/Resources/Private/Language/locallang.xlf"
-	      product-name="ot-recordselector">
-		<body>
-			<trans-unit id="element.placeholder" resname="element.placeholder">
-				<source>Search …</source>
-			</trans-unit>
-			<trans-unit id="chip.remove" resname="chip.remove">
-				<source>Remove</source>
-			</trans-unit>
-			<trans-unit id="badge.hidden" resname="badge.hidden">
-				<source>hidden</source>
-			</trans-unit>
-			<trans-unit id="badge.no_access" resname="badge.no_access">
-				<source>no access</source>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.title" resname="modal.remove_inaccessible.title">
-				<source>Remove record</source>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.message" resname="modal.remove_inaccessible.message">
-				<source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.confirm" resname="modal.remove_inaccessible.confirm">
-				<source>Remove</source>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.cancel" resname="modal.remove_inaccessible.cancel">
-				<source>Cancel</source>
-			</trans-unit>
-			<trans-unit id="error.unknown_table" resname="error.unknown_table">
-				<source>Unknown table</source>
-			</trans-unit>
-			<trans-unit id="error.access_denied" resname="error.access_denied">
-				<source>Access denied</source>
-			</trans-unit>
-		</body>
-	</file>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en">
+  <file id="ot-recordselector-locallang"
+        original="EXT:ot_recordselector/Resources/Private/Language/locallang.xlf">
+    <unit id="element.placeholder">
+      <segment>
+        <source>Search …</source>
+      </segment>
+    </unit>
+    <unit id="chip.remove">
+      <segment>
+        <source>Remove</source>
+      </segment>
+    </unit>
+    <unit id="button.edit">
+      <segment>
+        <source>Edit record</source>
+      </segment>
+    </unit>
+    <unit id="badge.hidden">
+      <segment>
+        <source>hidden</source>
+      </segment>
+    </unit>
+    <unit id="badge.partiallyHidden">
+      <segment>
+        <source>partially hidden</source>
+      </segment>
+    </unit>
+    <unit id="badge.noAccess">
+      <segment>
+        <source>no access</source>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.title">
+      <segment>
+        <source>Remove record</source>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.message">
+      <segment>
+        <source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.confirm">
+      <segment>
+        <source>Remove</source>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.cancel">
+      <segment>
+        <source>Cancel</source>
+      </segment>
+    </unit>
+    <unit id="error.unknownTable">
+      <segment>
+        <source>Unknown table</source>
+      </segment>
+    </unit>
+    <unit id="error.accessDenied">
+      <segment>
+        <source>Access denied</source>
+      </segment>
+    </unit>
+  </file>
 </xliff>
