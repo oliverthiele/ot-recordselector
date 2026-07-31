@@ -1,49 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-	<file source-language="en" target-language="de" datatype="plaintext"
-	      original="EXT:ot_recordselector/Resources/Private/Language/locallang.xlf"
-	      product-name="ot-recordselector">
-		<body>
-			<trans-unit id="element.placeholder" resname="element.placeholder" approved="yes">
-				<source>Search …</source>
-				<target>Suchen …</target>
-			</trans-unit>
-			<trans-unit id="chip.remove" resname="chip.remove" approved="yes">
-				<source>Remove</source>
-				<target>Entfernen</target>
-			</trans-unit>
-			<trans-unit id="badge.hidden" resname="badge.hidden" approved="yes">
-				<source>hidden</source>
-				<target>versteckt</target>
-			</trans-unit>
-			<trans-unit id="badge.no_access" resname="badge.no_access" approved="yes">
-				<source>no access</source>
-				<target>kein Zugriff</target>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.title" resname="modal.remove_inaccessible.title" approved="yes">
-				<source>Remove record</source>
-				<target>Datensatz entfernen</target>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.message" resname="modal.remove_inaccessible.message" approved="yes">
-				<source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
-				<target>Dieser Datensatz befindet sich auf einer Seite, auf die Sie keinen Zugriff haben. Das Entfernen macht es unmöglich, diese Auswahl wiederherzustellen.</target>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.confirm" resname="modal.remove_inaccessible.confirm" approved="yes">
-				<source>Remove</source>
-				<target>Entfernen</target>
-			</trans-unit>
-			<trans-unit id="modal.remove_inaccessible.cancel" resname="modal.remove_inaccessible.cancel" approved="yes">
-				<source>Cancel</source>
-				<target>Abbrechen</target>
-			</trans-unit>
-			<trans-unit id="error.unknown_table" resname="error.unknown_table" approved="yes">
-				<source>Unknown table</source>
-				<target>Unbekannte Tabelle</target>
-			</trans-unit>
-			<trans-unit id="error.access_denied" resname="error.access_denied" approved="yes">
-				<source>Access denied</source>
-				<target>Zugriff verweigert</target>
-			</trans-unit>
-		</body>
-	</file>
+<xliff version="2.0" xmlns="urn:oasis:names:tc:xliff:document:2.0" srcLang="en"
+       trgLang="de">
+  <file id="ot-recordselector-locallang"
+        original="EXT:ot_recordselector/Resources/Private/Language/locallang.xlf">
+    <unit id="element.placeholder">
+      <segment>
+        <source>Search …</source>
+        <target>Suchen …</target>
+      </segment>
+    </unit>
+    <unit id="chip.remove">
+      <segment>
+        <source>Remove</source>
+        <target>Entfernen</target>
+      </segment>
+    </unit>
+    <unit id="button.edit">
+      <segment>
+        <source>Edit record</source>
+        <target>Datensatz bearbeiten</target>
+      </segment>
+    </unit>
+    <unit id="badge.hidden">
+      <segment>
+        <source>hidden</source>
+        <target>versteckt</target>
+      </segment>
+    </unit>
+    <unit id="badge.partiallyHidden">
+      <segment>
+        <source>partially hidden</source>
+        <target>teilweise versteckt</target>
+      </segment>
+    </unit>
+    <unit id="badge.noAccess">
+      <segment>
+        <source>no access</source>
+        <target>kein Zugriff</target>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.title">
+      <segment>
+        <source>Remove record</source>
+        <target>Datensatz entfernen</target>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.message">
+      <segment>
+        <source>This record is on a page you cannot access. Removing it will make it impossible to restore this selection.</source>
+        <target>Dieser Datensatz befindet sich auf einer Seite, auf die Sie keinen Zugriff haben. Das Entfernen macht es unmöglich, diese Auswahl wiederherzustellen.</target>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.confirm">
+      <segment>
+        <source>Remove</source>
+        <target>Entfernen</target>
+      </segment>
+    </unit>
+    <unit id="modal.removeInaccessible.cancel">
+      <segment>
+        <source>Cancel</source>
+        <target>Abbrechen</target>
+      </segment>
+    </unit>
+    <unit id="error.unknownTable">
+      <segment>
+        <source>Unknown table</source>
+        <target>Unbekannte Tabelle</target>
+      </segment>
+    </unit>
+    <unit id="error.accessDenied">
+      <segment>
+        <source>Access denied</source>
+        <target>Zugriff verweigert</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>
