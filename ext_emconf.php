@@ -1,6 +1,6 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['ot_recordselector'] = [
     'title' => 'Record Selector',
     'description' => 'Custom backend form element for selecting TYPO3 records with translated titles, AJAX autocomplete, permission checks, and hidden-record indicators',
     'category' => 'be',
