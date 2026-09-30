@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Read the return URL of the edit link from the PSR-7 request instead of the
+  deprecated `GeneralUtility::getIndpEnv()` (TYPO3 v14.3, removed in v15)
+
 ## [2.0.0] — 2026-07-31
 
 ### Changed

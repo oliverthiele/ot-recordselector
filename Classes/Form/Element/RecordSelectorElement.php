@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace OliverThiele\OtRecordselector\Form\Element;
 
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Form\Element\AbstractFormElement;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
@@ -644,8 +646,22 @@ HTML;
     {
         return (string)$this->getBackendUriBuilder()->buildUriFromRoute('record_edit', [
             'edit' => [$tableName => [$uid => 'edit']],
-            'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
+            'returnUrl' => $this->getRequestUri(),
         ]);
+    }
+
+    /**
+     * Replaces GeneralUtility::getIndpEnv('REQUEST_URI'), deprecated in TYPO3 v14.3 (#109551).
+     * The FormDataCompiler always provides the request.
+     */
+    private function getRequestUri(): string
+    {
+        $request = $this->data['request'] ?? null;
+        $normalizedParams = $request instanceof ServerRequestInterface
+            ? $request->getAttribute('normalizedParams')
+            : null;
+
+        return $normalizedParams instanceof NormalizedParams ? $normalizedParams->getRequestUri() : '';
     }
 
     private function isPidAccessible(int $pid): bool
